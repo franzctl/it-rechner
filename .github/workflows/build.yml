@@ -119,6 +119,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: testen
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
@@ -175,7 +176,7 @@ jobs:
         run: |
           $version = $env:GITHUB_REF_NAME.TrimStart('v')
           Compress-Archive -Path pakete/it-rechner -DestinationPath "pakete/it-rechner-$version-windows.zip"
-          Remove-Item -Recurse pakete/it-rechner
+          Remove-Item -Recurse -Force pakete/it-rechner
 
       - name: Pakete aufbewahren
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
