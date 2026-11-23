@@ -12,6 +12,10 @@ public class Rechnerkern {
 		ans = wert;
 	}
 
+	public double getAns() {
+		return ans;
+	}
+
 	public double auswerten(String eingabe) {
 		text = eingabe.replace(" ", "");
 		pos = 0;

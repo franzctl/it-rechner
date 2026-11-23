@@ -2,4 +2,16 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Helles Design. Das dunkle steht in values-night/colors.xml, Android wählt nach der Systemeinstellung. -->
+    <color name="hintergrund">#F2F3F5</color>
+    <color name="flaeche">#FFFFFF</color>
+    <color name="text">#1A1A1A</color>
+    <color name="text_leise">#8A90A8</color>
+    <color name="taste">#E4E6EA</color>
+
+    <!-- In beiden Designs gleich -->
+    <color name="operator">#F58A1F</color>
+    <color name="gleich">#1E88E5</color>
+    <color name="text_auf_operator">#1A1A1A</color>
 </resources>

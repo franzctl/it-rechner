@@ -4,6 +4,13 @@ Ein Taschenrechner für IT-Berufe: Grundrechnen, Zahlensysteme, Bit-Operationen,
 
 ![IT-Rechner im erweiterten Modus mit Subnetzrechner](docs/screenshot.png)
 
+<details>
+<summary>Im dunklen Design</summary>
+
+![IT-Rechner im dunklen Design](docs/screenshot-dunkel.png)
+
+</details>
+
 ## Was er kann
 
 - **Rechnen mit Punkt vor Strich und Klammern**, dazu Potenz (`2**8`), Rest (`17%5`) und das letzte Ergebnis als `Ans`
@@ -14,6 +21,7 @@ Ein Taschenrechner für IT-Berufe: Grundrechnen, Zahlensysteme, Bit-Operationen,
 - **ASCII:** Zeichen in Zahl und zurück, in allen Zahlensystemen
 - **Datengrößen:** KiB, MiB, GiB (Faktor 1024) neben KB, MB, GB (Faktor 1000)
 - **Verlauf** aller Rechnungen, auch zum Speichern und Drucken in einem kleinen Editor
+- **Helles und dunkles Design:** am Rechner über „Ansicht → Dunkles Design“ oder `Strg+D`, die Wahl bleibt gespeichert. Die Android-App folgt der Einstellung des Handys
 - **Tastatur:** Alles lässt sich tippen. `F1` zeigt die Schreibweise, `Shift+F2` die Tastenkürzel, `Strg+I` den erweiterten Modus
 
 Achtung: `^` ist XOR wie in Java, die Potenz schreibt man `**`.

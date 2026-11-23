@@ -28,10 +28,12 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int TASTE    = Color.parseColor("#E4E6EA");
-    private static final int OPERATOR = Color.parseColor("#F58A1F");
-    private static final int GLEICH   = Color.parseColor("#1E88E5");
-    private static final int TEXT     = Color.parseColor("#1A1A1A");
+    // Farben kommen aus res/values und res/values-night, je nach hellem oder dunklem Design
+    private int farbeTaste;
+    private int farbeOperator;
+    private int farbeGleich;
+    private int farbeText;
+    private int farbeTextAufOperator;
 
     private final Rechnerkern kern = new Rechnerkern();
     private final Map<String, Button> tastenListe = new HashMap<>();
@@ -139,6 +141,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        farbeTaste = getColor(R.color.taste);
+        farbeOperator = getColor(R.color.operator);
+        farbeGleich = getColor(R.color.gleich);
+        farbeText = getColor(R.color.text);
+        farbeTextAufOperator = getColor(R.color.text_auf_operator);
         setSupportActionBar(findViewById(R.id.toolbar));
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -254,8 +261,8 @@ public class MainActivity extends AppCompatActivity {
             knopf.setText(name);
             knopf.setTextSize(13);
             knopf.setAllCaps(false);
-            knopf.setTextColor(name.equals(modus) ? Color.WHITE : TEXT);
-            knopf.setBackgroundColor(name.equals(modus) ? GLEICH : TASTE);
+            knopf.setTextColor(name.equals(modus) ? Color.WHITE : farbeText);
+            knopf.setBackgroundColor(name.equals(modus) ? farbeGleich : farbeTaste);
             knopf.setOnClickListener(v -> {
                 modus = name;
                 baueModusleiste();
@@ -305,8 +312,10 @@ public class MainActivity extends AppCompatActivity {
         Button knopf = new Button(this);
         knopf.setText(beschriftung);
         knopf.setTextSize(20);
-        knopf.setTextColor(beschriftung.equals("=") ? Color.WHITE : TEXT);
-        knopf.setBackgroundColor(farbeFuer(beschriftung));
+        int hintergrund = farbeFuer(beschriftung);
+        knopf.setTextColor(beschriftung.equals("=") ? Color.WHITE
+                : hintergrund == farbeOperator ? farbeTextAufOperator : farbeText);
+        knopf.setBackgroundColor(hintergrund);
         knopf.setOnClickListener(v -> tasteGedrueckt(beschriftung));
 
         GridLayout.LayoutParams masse = new GridLayout.LayoutParams();
@@ -327,20 +336,20 @@ public class MainActivity extends AppCompatActivity {
 
     private int farbeFuer(String beschriftung) {
         if (beschriftung.equals("=")) {
-            return GLEICH;
+            return farbeGleich;
         }
 
         if (beschriftung.equals("C_")) {
-            return TASTE;
+            return farbeTaste;
         }
 
         String[] operatoren = { "C", "DEL", "(", ")", "%", "+/-", "/", "*", "-", "+" };
         for (int i = 0; i < operatoren.length; i++) {
             if (beschriftung.equals(operatoren[i])) {
-                return OPERATOR;
+                return farbeOperator;
             }
         }
-        return TASTE;
+        return farbeTaste;
     }
 
     private void tasteGedrueckt(String beschriftung) {

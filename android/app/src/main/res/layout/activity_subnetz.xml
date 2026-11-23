@@ -4,29 +4,29 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#F2F3F5"
+    android:background="@color/hintergrund"
     android:fitsSystemWindows="true">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:titleTextColor="#1A1A1A"
-        android:background="#FFFFFF" />
+        app:titleTextColor="@color/text"
+        android:background="@color/flaeche" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="IP-Adresse"
         android:textSize="12sp"
-        android:textColor="#8A90A8" />
+        android:textColor="@color/text_leise" />
 
     <EditText
         android:id="@+id/feldIp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:textColor="#1A1A1A"
+        android:background="@color/flaeche"
+        android:textColor="@color/text"
         android:padding="12dp"
         android:inputType="text"
         android:hint="192.168.178.10"
@@ -38,14 +38,14 @@
         android:layout_marginTop="8dp"
         android:text="Präfix oder Maske"
         android:textSize="12sp"
-        android:textColor="#8A90A8" />
+        android:textColor="@color/text_leise" />
 
     <EditText
         android:id="@+id/feldPraefix"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:textColor="#1A1A1A"
+        android:background="@color/flaeche"
+        android:textColor="@color/text"
         android:padding="12dp"
         android:inputType="number|numberDecimal"
         android:digits="0123456789./"
@@ -64,7 +64,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginTop="12dp"
-        android:background="#FFFFFF">
+        android:background="@color/flaeche">
 
         <TextView
             android:id="@+id/ausgabe"
@@ -73,7 +73,7 @@
             android:padding="12dp"
             android:fontFamily="monospace"
             android:textSize="13sp"
-            android:textColor="#1A1A1A"
+            android:textColor="@color/text"
             android:textIsSelectable="true"
             android:contentDescription="Ergebnis der Netzberechnung" />
     </ScrollView>

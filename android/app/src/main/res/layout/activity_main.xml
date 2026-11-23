@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F2F3F5"
+    android:background="@color/hintergrund"
     android:padding="12dp">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        app:titleTextColor="#1A1A1A"
+        android:background="@color/flaeche"
+        app:titleTextColor="@color/text"
         android:title="IT-Rechner" />
 
     <!-- Anzeige: oben die Rechnung, unten das Ergebnis -->
@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#FFFFFF"
+        android:background="@color/flaeche"
         android:padding="16dp">
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:gravity="end"
             android:textSize="16sp"
-            android:textColor="#8A90A8"
+            android:textColor="@color/text_leise"
             android:contentDescription="Aktuelle Rechnung"
             android:text=" " />
 
@@ -41,7 +41,7 @@
             android:gravity="end"
             android:textSize="36sp"
             android:textStyle="bold"
-            android:textColor="#1A1A1A"
+            android:textColor="@color/text"
             android:contentDescription="Ergebnis"
             android:text="0" />
     </LinearLayout>
@@ -51,11 +51,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="#FFFFFF"
+        android:background="@color/flaeche"
         android:padding="12dp"
         android:fontFamily="monospace"
         android:textSize="13sp"
-        android:textColor="#1A1A1A"
+        android:textColor="@color/text"
         android:visibility="gone"
         android:contentDescription="Zahlensysteme"
         android:text="HEX  -\nDEZ  0\nOKT  -\nBIN  -" />

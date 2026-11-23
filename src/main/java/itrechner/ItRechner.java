@@ -45,14 +45,6 @@ public class ItRechner extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Color HINTERGRUND 	= new Color(0xF2, 0xF3, 0xF5);
-	private static final Color FLAECHE     	= new Color(0xFF, 0xFF, 0xFF);
-	private static final Color TASTE       	= new Color(0xE4, 0xE6, 0xEA);
-	private static final Color TEXT        	= new Color(0x1A, 0x1A, 0x1A);
-	private static final Color TEXT_HELL	= new Color(0xFF, 0xFF, 0xFF);
-	private static final Color GRAU        	= new Color(0x8A, 0x90, 0xA8);
-	private static final Color OPERATOR 	= new Color(0xF5, 0x8A, 0x1F);
-	private static final Color GLEICH   	= new Color(0x1E, 0x88, 0xE5);
 
 	private final Map<String, JButton> tastenListe = new HashMap<String, JButton>();
 
@@ -110,6 +102,7 @@ public class ItRechner extends JFrame {
 			"  Strg + C                 Ergebnis kopieren",
 			"  Strg + V                 Einfuegen",
 			"  Strg + I                 Erweitert ein/aus",
+			"  Strg + D                 Dunkles Design ein/aus",
 			"  Strg + H                 Verlauf anzeigen",
 			"  F1                       Schreibweise",
 			"  Shift + F1               diese Uebersicht" };
@@ -124,7 +117,7 @@ public class ItRechner extends JFrame {
 
 	private final Rechnerkern kern = new Rechnerkern();
 
-	private final DefaultListModel<String> verlaufDaten = new DefaultListModel<String>();
+	private final DefaultListModel<String> verlaufDaten;
 
 	private final JPanel itBereich = new JPanel(new BorderLayout());
 
@@ -151,22 +144,29 @@ public class ItRechner extends JFrame {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
+				Design.ausEinstellungen();
 				new ItRechner().setVisible(true);
 			}
 		});
 	}
 
 	public ItRechner() {
+		this(new DefaultListModel<String>());
+	}
+
+	/** Das Fenster bekommt den Verlauf mit, damit er beim Wechsel des Designs erhalten bleibt. */
+	private ItRechner(DefaultListModel<String> verlauf) {
+		verlaufDaten = verlauf;
 		setTitle("IT-Rechner");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setJMenuBar(baueMenueleiste());
 
 		JPanel inhalt = new JPanel(new BorderLayout(12, 12));
-		inhalt.setBackground(HINTERGRUND);
+		inhalt.setBackground(Design.hintergrund);
 		inhalt.setBorder(new EmptyBorder(14, 14, 14, 14));
 		setContentPane(inhalt);
 
-		itBereich.setBackground(HINTERGRUND);
+		itBereich.setBackground(Design.hintergrund);
 		itBereich.setBorder(new EmptyBorder(0, 12, 0, 0));
 		itBereich.setVisible(false);
 
@@ -256,6 +256,11 @@ public class ItRechner extends JFrame {
 		erweitertModus.addActionListener(e -> klappeErweitert(erweitertModus.isSelected()));
 		ansicht.add(erweitertModus);
 
+		JCheckBoxMenuItem dunkelModus = new JCheckBoxMenuItem("Dunkles Design", Design.istDunkel());
+		dunkelModus.setAccelerator(KeyStroke.getKeyStroke("control D"));
+		dunkelModus.addActionListener(e -> wechsleDesign(dunkelModus.isSelected()));
+		ansicht.add(dunkelModus);
+
 		JMenuItem verlaufZeigen = new JMenuItem("Verlauf anzeigen");
 		verlaufZeigen.setAccelerator(KeyStroke.getKeyStroke("control H"));
 		verlaufZeigen.addActionListener(e -> {
@@ -305,13 +310,13 @@ public class ItRechner extends JFrame {
 	// ===================== Anzeige ========================================
 	private JPanel baueAnzeige() {
 		JPanel feld = new JPanel(new GridLayout(2, 1, 4, 4));
-		feld.setBackground(FLAECHE);
+		feld.setBackground(Design.flaeche);
 		feld.setBorder(new EmptyBorder(12, 16, 12, 16));
 
-		zeileOben.setForeground(GRAU);
+		zeileOben.setForeground(Design.textLeise);
 		zeileOben.setFont(new Font("SansSerif", Font.PLAIN, 15));
 
-		zeileUnten.setForeground(TEXT);
+		zeileUnten.setForeground(Design.text);
 		zeileUnten.setFont(new Font("SansSerif", Font.BOLD, 32));
 
 		feld.add(zeileOben);
@@ -360,6 +365,35 @@ public class ItRechner extends JFrame {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	/**
+	 * Swing faerbt fertige Fenster nicht zuverlaessig um. Deshalb entsteht ein neues Fenster
+	 * im neuen Design, das Eingabe, Verlauf, Ans und den erweiterten Modus uebernimmt.
+	 */
+	private void wechsleDesign(boolean dunkel) {
+		Design.setze(dunkel, true);
+		ItRechner neu = new ItRechner(verlaufDaten);
+		neu.kern.setAns(kern.getAns());
+		neu.eingabe = eingabe;
+		neu.ergebnisSteht = ergebnisSteht;
+		neu.zeileOben.setText(zeileOben.getText());
+		neu.zeileUnten.setText(zeileUnten.getText());
+		if (!verlaufDaten.isEmpty()) {
+			neu.zeigeZahlensysteme(kern.getAns());
+		}
+		neu.feldIp.setText(feldIp.getText());
+		neu.feldPraefix.setText(feldPraefix.getText());
+		neu.ausgabeSubnetz.setText(ausgabeSubnetz.getText());
+		neu.feldAscii.setText(feldAscii.getText());
+		neu.ausgabeAscii.setText(ausgabeAscii.getText());
+		neu.feldMenge.setText(feldMenge.getText());
+		neu.auswahlEinheit.setSelectedIndex(auswahlEinheit.getSelectedIndex());
+		neu.ausgabeGroessen.setText(ausgabeGroessen.getText());
+		neu.klappeErweitert(erweitertModus.isSelected());
+		neu.setLocation(getLocation());
+		neu.setVisible(true);
+		dispose();
+	}
+
 	private void klappeErweitert(boolean sichtbar) {
 		itBereich.setVisible(sichtbar);
 		erweitertModus.setSelected(sichtbar);
@@ -372,12 +406,12 @@ public class ItRechner extends JFrame {
 
 	private JPanel baueZahlensysteme() {
 		JPanel feld = new JPanel(new GridLayout(4, 1, 0, 4));
-		feld.setBackground(FLAECHE);
+		feld.setBackground(Design.flaeche);
 		feld.setBorder(new EmptyBorder(10, 14, 10, 14));
 
 		JLabel[] alle = { anzeigeHex, anzeigeDez, anzeigeOkt, anzeigeBin };
 		for (int i = 0; i < alle.length; i++) {
-			alle[i].setForeground(TEXT);
+			alle[i].setForeground(Design.text);
 			alle[i].setFont(new Font("Monospaced", Font.PLAIN, 13));
 			feld.add(alle[i]);
 		}
@@ -414,27 +448,27 @@ public class ItRechner extends JFrame {
 	/** Reiter fuer den Subnetzrechner. */
 	private JPanel baueSubnetzReiter() {
 		JPanel eingaben = new JPanel(new GridLayout(2, 2, 6, 6));
-		eingaben.setBackground(HINTERGRUND);
+		eingaben.setBackground(Design.hintergrund);
 		eingaben.add(beschriftung("IP-Adresse"));
 		eingaben.add(feldIp);
 		eingaben.add(beschriftung("Praefix (CIDR)"));
 		eingaben.add(feldPraefix);
 
 		JButton rechnen = new JButton("Netz berechnen");
-		rechnen.setBackground(OPERATOR);
-		rechnen.setForeground(TEXT);
+		rechnen.setBackground(Design.OPERATOR);
+		rechnen.setForeground(Design.TEXT_AUF_OPERATOR);
 		rechnen.setFocusPainted(false);
 		rechnen.addActionListener(e -> berechneNetz());
 
 		JPanel kopf = new JPanel(new BorderLayout(0, 6));
-		kopf.setBackground(HINTERGRUND);
+		kopf.setBackground(Design.hintergrund);
 		kopf.add(eingaben, BorderLayout.CENTER);
 		kopf.add(rechnen, BorderLayout.SOUTH);
 
 		ausgabeSubnetz.setEditable(false);
 		((javax.swing.text.DefaultCaret) ausgabeSubnetz.getCaret()).setUpdatePolicy(javax.swing.text.DefaultCaret.NEVER_UPDATE);
-		ausgabeSubnetz.setBackground(FLAECHE);
-		ausgabeSubnetz.setForeground(TEXT);
+		ausgabeSubnetz.setBackground(Design.flaeche);
+		ausgabeSubnetz.setForeground(Design.text);
 		ausgabeSubnetz.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		ausgabeSubnetz.setBorder(new EmptyBorder(8, 8, 8, 8));
 
@@ -443,7 +477,7 @@ public class ItRechner extends JFrame {
 		roller.setBorder(null);
 
 		JPanel reiter = new JPanel(new BorderLayout(0, 8));
-		reiter.setBackground(HINTERGRUND);
+		reiter.setBackground(Design.hintergrund);
 		reiter.setBorder(new EmptyBorder(10, 10, 10, 10));
 		reiter.add(kopf, BorderLayout.NORTH);
 		reiter.add(roller, BorderLayout.CENTER);
@@ -453,7 +487,7 @@ public class ItRechner extends JFrame {
 	/** Kleine graue Beschriftung fuer Eingabefelder. */
 	private JLabel beschriftung(String text) {
 		JLabel schild = new JLabel(text);
-		schild.setForeground(GRAU);
+		schild.setForeground(Design.textLeise);
 		schild.setFont(new Font("SansSerif", Font.PLAIN, 12));
 		return schild;
 	}
@@ -473,25 +507,25 @@ public class ItRechner extends JFrame {
 	/** Reiter fuer die ASCII-Tabelle. */
 	private JPanel baueAsciiReiter() {
 		JPanel eingaben = new JPanel(new BorderLayout(6, 0));
-		eingaben.setBackground(HINTERGRUND);
+		eingaben.setBackground(Design.hintergrund);
 		eingaben.add(beschriftung("Zahl oder Zeichen"), BorderLayout.WEST);
 		eingaben.add(feldAscii, BorderLayout.CENTER);
 
 		JButton zeigen = new JButton("Umrechnen");
-		zeigen.setBackground(OPERATOR);
-		zeigen.setForeground(TEXT);
+		zeigen.setBackground(Design.OPERATOR);
+		zeigen.setForeground(Design.TEXT_AUF_OPERATOR);
 		zeigen.setFocusPainted(false);
 		zeigen.addActionListener(e -> zeigeAscii());
 
 		JPanel kopf = new JPanel(new BorderLayout(0, 6));
-		kopf.setBackground(HINTERGRUND);
+		kopf.setBackground(Design.hintergrund);
 		kopf.add(eingaben, BorderLayout.CENTER);
 		kopf.add(zeigen, BorderLayout.SOUTH);
 
 		ausgabeAscii.setEditable(false);
 		((javax.swing.text.DefaultCaret) ausgabeAscii.getCaret()).setUpdatePolicy(javax.swing.text.DefaultCaret.NEVER_UPDATE);
-		ausgabeAscii.setBackground(FLAECHE);
-		ausgabeAscii.setForeground(TEXT);
+		ausgabeAscii.setBackground(Design.flaeche);
+		ausgabeAscii.setForeground(Design.text);
 		ausgabeAscii.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		ausgabeAscii.setBorder(new EmptyBorder(8, 8, 8, 8));
 
@@ -500,7 +534,7 @@ public class ItRechner extends JFrame {
 		roller.setBorder(null);
 
 		JPanel reiter = new JPanel(new BorderLayout(0, 8));
-		reiter.setBackground(HINTERGRUND);
+		reiter.setBackground(Design.hintergrund);
 		reiter.setBorder(new EmptyBorder(10, 10, 10, 10));
 		reiter.add(kopf, BorderLayout.NORTH);
 		reiter.add(roller, BorderLayout.CENTER);
@@ -552,27 +586,27 @@ public class ItRechner extends JFrame {
 	/** Reiter fuer Datenmengen: KiB rechnet mit 1024, KB mit 1000. */
 	private JPanel baueGroessenReiter() {
 		JPanel eingaben = new JPanel(new GridLayout(2, 2, 6, 6));
-		eingaben.setBackground(HINTERGRUND);
+		eingaben.setBackground(Design.hintergrund);
 		eingaben.add(beschriftung("Menge"));
 		eingaben.add(feldMenge);
 		eingaben.add(beschriftung("Einheit"));
 		eingaben.add(auswahlEinheit);
 
 		JButton rechnen = new JButton("Umrechnen");
-		rechnen.setBackground(OPERATOR);
-		rechnen.setForeground(TEXT);
+		rechnen.setBackground(Design.OPERATOR);
+		rechnen.setForeground(Design.TEXT_AUF_OPERATOR);
 		rechnen.setFocusPainted(false);
 		rechnen.addActionListener(e -> berechneGroessen());
 
 		JPanel kopf = new JPanel(new BorderLayout(0, 6));
-		kopf.setBackground(HINTERGRUND);
+		kopf.setBackground(Design.hintergrund);
 		kopf.add(eingaben, BorderLayout.CENTER);
 		kopf.add(rechnen, BorderLayout.SOUTH);
 
 		ausgabeGroessen.setEditable(false);
 		((javax.swing.text.DefaultCaret) ausgabeGroessen.getCaret()).setUpdatePolicy(javax.swing.text.DefaultCaret.NEVER_UPDATE);
-		ausgabeGroessen.setBackground(FLAECHE);
-		ausgabeGroessen.setForeground(TEXT);
+		ausgabeGroessen.setBackground(Design.flaeche);
+		ausgabeGroessen.setForeground(Design.text);
 		ausgabeGroessen.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		ausgabeGroessen.setBorder(new EmptyBorder(8, 8, 8, 8));
 
@@ -581,7 +615,7 @@ public class ItRechner extends JFrame {
 		roller.setBorder(null);
 
 		JPanel reiter = new JPanel(new BorderLayout(0, 8));
-		reiter.setBackground(HINTERGRUND);
+		reiter.setBackground(Design.hintergrund);
 		reiter.setBorder(new EmptyBorder(10, 10, 10, 10));
 		reiter.add(kopf, BorderLayout.NORTH);
 		reiter.add(roller, BorderLayout.CENTER);
@@ -637,7 +671,7 @@ public class ItRechner extends JFrame {
 	// ===================== Tasten =============================
 	private JPanel baueTastenbereich() {
 		JPanel feld = new JPanel(new GridLayout(5, 4, 10, 10));
-		feld.setBackground(HINTERGRUND);
+		feld.setBackground(Design.hintergrund);
 
 		String[] beschriftungen = {
 				"C",   "DEL", "(", ")",
@@ -654,7 +688,7 @@ public class ItRechner extends JFrame {
 		gleich.setMinimumSize(new Dimension(0, 40));
 
 		JPanel bereich = new JPanel(new BorderLayout(0, 10));
-		bereich.setBackground(HINTERGRUND);
+		bereich.setBackground(Design.hintergrund);
 		bereich.add(feld, BorderLayout.CENTER);
 		bereich.add(gleich, BorderLayout.SOUTH);
 		return bereich;
@@ -679,7 +713,8 @@ public class ItRechner extends JFrame {
 		knopf.setContentAreaFilled(false);
 		knopf.setBorderPainted(false);
 		knopf.setFocusPainted(false);
-		knopf.setForeground(beschriftung.equals("=") ? TEXT_HELL : TEXT);
+		knopf.setForeground(beschriftung.equals("=") ? Design.TEXT_HELL
+				: farbe == Design.OPERATOR ? Design.TEXT_AUF_OPERATOR : Design.text);
 		knopf.setFont(new Font("SansSerif", Font.PLAIN, 20));
 		knopf.addActionListener(e -> tasteGedrueckt(beschriftung));
 
@@ -693,16 +728,16 @@ public class ItRechner extends JFrame {
 
 	private Color farbeFuer(String beschriftung) {
 		if (beschriftung.equals("=")) {
-			return GLEICH;
+			return Design.GLEICH;
 		}
 		String[] operatoren = { "C", "DEL", "(", ")", "%", "+/-", "/", "*", "-", "+",
 				"&", "|", "^", "~", "<<", ">>", "**" };
 		for (int i = 0; i < operatoren.length; i++) {
 			if (beschriftung.equals(operatoren[i])) {
-				return OPERATOR;
+				return Design.OPERATOR;
 			}
 		}
-		return TASTE;
+		return Design.taste;
 	}
 
 	private void tasteGedrueckt(String beschriftung) {
@@ -750,7 +785,7 @@ public class ItRechner extends JFrame {
 
 	private JPanel baueItTasten() {
 		JPanel feld = new JPanel(new GridLayout(4, 4, 8, 8));
-		feld.setBackground(HINTERGRUND);
+		feld.setBackground(Design.hintergrund);
 		feld.setBorder(new EmptyBorder(10, 0, 0, 0));
 
 		String[] beschriftungen = {
@@ -767,7 +802,7 @@ public class ItRechner extends JFrame {
 
 	private JPanel baueWissenschaftTasten() {
 		JPanel feld = new JPanel(new GridLayout(3, 3, 8, 8));
-		feld.setBackground(HINTERGRUND);
+		feld.setBackground(Design.hintergrund);
 		feld.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		String[] beschriftungen = {
