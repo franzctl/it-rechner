@@ -6,6 +6,8 @@ plugins {
 def appVersion = providers.environmentVariable("VERSION").getOrElse("1.0.0")
 def teile = appVersion =~ /^(\d+)\.(\d+)\.(\d+)$/
 def appVersionCode = teile.matches() ? teile.group(1).toInteger() * 10000 + teile.group(2).toInteger() * 100 + teile.group(3).toInteger() : 1
+// Android verlangt mindestens 1, auch für Testbauten mit Version 0.0.0
+appVersionCode = Math.max(1, appVersionCode)
 
 // Der Signierschlüssel liegt nie im Repo. Beim Release legt GitHub Actions ihn aus einem Secret ab.
 def keystorePfad = providers.environmentVariable("ANDROID_KEYSTORE_PATH").orNull
