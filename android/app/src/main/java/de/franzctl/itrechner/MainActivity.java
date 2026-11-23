@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -159,6 +160,9 @@ public class MainActivity extends AppCompatActivity {
 
         tastenfeld = findViewById(R.id.tastenfeld);
         modusleiste = findViewById(R.id.modusleiste);
+        if (savedInstanceState != null) {
+            modus = savedInstanceState.getString("modus", "Standard");
+        }
         baueModusleiste();
         fuelleTastenfeld();
 
@@ -172,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle zustand) {
         super.onSaveInstanceState(zustand);
+        zustand.putString("modus", modus);
         zustand.putString("eingabe", eingabe);
         zustand.putBoolean("ergebnisSteht", ergebnisSteht);
         zustand.putString("zeileOben", zeileOben.getText().toString());
@@ -196,6 +201,10 @@ public class MainActivity extends AppCompatActivity {
             boolean an = !eintrag.isChecked();
             eintrag.setChecked(an);
             zahlensysteme.setVisibility(an ? View.VISIBLE : View.GONE);
+            return true;
+        }
+        if (id == R.id.menue_design) {
+            waehleDesign();
             return true;
         }
         if (id == R.id.menue_ueber) {
@@ -223,6 +232,32 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(eintrag);
+    }
+
+    /** Auswahl zwischen Systemeinstellung, hell und dunkel. Die Wahl bleibt gespeichert. */
+    private void waehleDesign() {
+        final int[] modi = {
+                AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+                AppCompatDelegate.MODE_NIGHT_NO,
+                AppCompatDelegate.MODE_NIGHT_YES };
+        String[] namen = { "Wie das Handy", "Hell", "Dunkel" };
+
+        int aktuell = 0;
+        int gespeichert = ItRechnerApp.gespeichertesDesign(this);
+        for (int i = 0; i < modi.length; i++) {
+            if (modi[i] == gespeichert) {
+                aktuell = i;
+            }
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Design")
+                .setSingleChoiceItems(namen, aktuell, (dialog, auswahl) -> {
+                    dialog.dismiss();
+                    ItRechnerApp.setzeDesign(this, modi[auswahl]);
+                })
+                .setNegativeButton("Abbrechen", null)
+                .show();
     }
 
     /** Zeigt einen Text in Monospaced-Schrift, damit die Spalten stehen. */

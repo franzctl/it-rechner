@@ -21,7 +21,7 @@ Ein Taschenrechner für IT-Berufe: Grundrechnen, Zahlensysteme, Bit-Operationen,
 - **ASCII:** Zeichen in Zahl und zurück, in allen Zahlensystemen
 - **Datengrößen:** KiB, MiB, GiB (Faktor 1024) neben KB, MB, GB (Faktor 1000)
 - **Verlauf** aller Rechnungen, auch zum Speichern und Drucken in einem kleinen Editor
-- **Helles und dunkles Design:** am Rechner über „Ansicht → Dunkles Design“ oder `Strg+D`, die Wahl bleibt gespeichert. Die Android-App folgt der Einstellung des Handys
+- **Helles und dunkles Design:** am Rechner über „Ansicht → Dunkles Design“ oder `Strg+D`, die Wahl bleibt gespeichert. Die Android-App folgt der Einstellung des Handys, im Menü unter „Design“ lässt sie sich fest auf hell oder dunkel stellen
 - **Tastatur:** Alles lässt sich tippen. `F1` zeigt die Schreibweise, `Shift+F2` die Tastenkürzel, `Strg+I` den erweiterten Modus
 
 Achtung: `^` ist XOR wie in Java, die Potenz schreibt man `**`.

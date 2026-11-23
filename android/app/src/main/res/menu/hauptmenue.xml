@@ -33,6 +33,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/menue_design"
+        android:title="Design"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/menue_erweitert"
         android:title="Erweitert"
         android:checkable="true"
