@@ -29,6 +29,7 @@ Die fertigen Pakete liegen unter [Releases](../../releases):
 | Windows | `-windows.zip` | Entpacken und `it-rechner.exe` starten, keine Installation nötig |
 | macOS | `.dmg` | Öffnen und in „Programme“ ziehen |
 | Alle mit Java 21 | `.jar` | `java -jar it-rechner-*.jar` |
+| Android 7 und neuer | `.apk` | Herunterladen und öffnen, die Installation aus dieser Quelle einmal erlauben |
 
 Die Pakete für Linux, Windows und macOS bringen ihre eigene Java-Laufzeit mit.
 
@@ -73,4 +74,6 @@ Die Actions sind auf Commit-Hashes festgelegt, Dependabot hält sie und die Grad
 
 ## Android
 
-Eine Android-Version gibt es auch. Ihr Quellcode kommt in einem nächsten Schritt hierher, dann baut der Workflow die App mit.
+Die Android-App liegt unter `android/`. Sie rechnet mit demselben Kern wie die Desktop-Version und hat eigene Seiten für Subnetze und ASCII. Im Moment liegen Rechenkern und Subnetting dort noch als Kopie, ein gemeinsames Modul für beide Versionen ist der nächste Schritt.
+
+Der Workflow baut und testet die App bei jedem Push. Bei einem Release signiert er sie mit meinem Schlüssel. Der Schlüssel liegt nie im Repo, sondern verschlüsselt in den Secrets des Repos (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`). Nur der Android-Schritt bekommt ihn, und nach dem Bauen wird er wieder gelöscht.

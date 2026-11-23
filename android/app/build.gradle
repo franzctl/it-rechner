@@ -1,0 +1,64 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+// Version kommt beim Release aus dem Git-Tag (v1.3.0 -> versionName 1.3.0, versionCode 10300)
+def appVersion = providers.environmentVariable("VERSION").getOrElse("1.0.0")
+def teile = appVersion =~ /^(\d+)\.(\d+)\.(\d+)$/
+def appVersionCode = teile.matches() ? teile.group(1).toInteger() * 10000 + teile.group(2).toInteger() * 100 + teile.group(3).toInteger() : 1
+
+// Der Signierschlüssel liegt nie im Repo. Beim Release legt GitHub Actions ihn aus einem Secret ab.
+def keystorePfad = providers.environmentVariable("ANDROID_KEYSTORE_PATH").orNull
+
+android {
+    namespace 'de.franzctl.itrechner'
+    compileSdk {
+        version = release(37)
+    }
+
+    defaultConfig {
+        applicationId "de.franzctl.itrechner"
+        minSdk 24
+        targetSdk 37
+        versionCode appVersionCode
+        versionName appVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePfad) {
+                storeFile file(keystorePfad)
+                storePassword providers.environmentVariable("ANDROID_KEYSTORE_PASSWORD").get()
+                keyAlias providers.environmentVariable("ANDROID_KEY_ALIAS").get()
+                keyPassword providers.environmentVariable("ANDROID_KEY_PASSWORD").get()
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            if (keystorePfad) {
+                signingConfig signingConfigs.release
+            }
+            optimization {
+                enable false
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+dependencies {
+    implementation libs.activity.ktx
+    implementation libs.appcompat
+    implementation libs.constraintlayout
+    implementation libs.material
+    testImplementation libs.junit
+    androidTestImplementation libs.espresso.core
+    androidTestImplementation libs.ext.junit
+}

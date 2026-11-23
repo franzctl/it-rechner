@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#F2F3F5"
+    android:fitsSystemWindows="true">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:titleTextColor="#1A1A1A"
+        android:background="#FFFFFF" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="IP-Adresse"
+        android:textSize="12sp"
+        android:textColor="#8A90A8" />
+
+    <EditText
+        android:id="@+id/feldIp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:textColor="#1A1A1A"
+        android:padding="12dp"
+        android:inputType="text"
+        android:hint="192.168.178.10"
+        android:autofillHints=""/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Präfix oder Maske"
+        android:textSize="12sp"
+        android:textColor="#8A90A8" />
+
+    <EditText
+        android:id="@+id/feldPraefix"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:textColor="#1A1A1A"
+        android:padding="12dp"
+        android:inputType="number|numberDecimal"
+        android:digits="0123456789./"
+        android:hint="24 oder 255.255.255.0"
+        android:autofillHints=""/>
+
+    <Button
+        android:id="@+id/knopfRechnen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Netz berechnen" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="12dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:id="@+id/ausgabe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:fontFamily="monospace"
+            android:textSize="13sp"
+            android:textColor="#1A1A1A"
+            android:textIsSelectable="true"
+            android:contentDescription="Ergebnis der Netzberechnung" />
+    </ScrollView>
+</LinearLayout>

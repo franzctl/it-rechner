@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F2F3F5"
+    android:padding="12dp">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        app:titleTextColor="#1A1A1A"
+        android:title="IT-Rechner" />
+
+    <!-- Anzeige: oben die Rechnung, unten das Ergebnis -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/zeileOben"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textSize="16sp"
+            android:textColor="#8A90A8"
+            android:contentDescription="Aktuelle Rechnung"
+            android:text=" " />
+
+        <TextView
+            android:id="@+id/zeileUnten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A1A"
+            android:contentDescription="Ergebnis"
+            android:text="0" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/zahlensysteme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="#FFFFFF"
+        android:padding="12dp"
+        android:fontFamily="monospace"
+        android:textSize="13sp"
+        android:textColor="#1A1A1A"
+        android:visibility="gone"
+        android:contentDescription="Zahlensysteme"
+        android:text="HEX  -\nDEZ  0\nOKT  -\nBIN  -" />
+
+    <LinearLayout
+        android:id="@+id/modusleiste"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal" />
+
+    <!-- Tastenfeld -->
+    <GridLayout
+        android:id="@+id/tastenfeld"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="12dp"
+        android:columnCount="4"
+        android:rowCount="6" />
+
+</LinearLayout>

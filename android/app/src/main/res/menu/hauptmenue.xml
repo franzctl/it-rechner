@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menue_kopieren"
+        android:title="Ergebnis kopieren"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menue_schreibweise"
+        android:title="Schreibweise"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menue_nachschlagen"
+        android:title="Nachschlagen"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menue_ueber"
+        android:title="Über"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menue_subnetz"
+        android:title="Subnetzrechner"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menue_ascii"
+        android:title="Zeichen und Codes"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menue_erweitert"
+        android:title="Erweitert"
+        android:checkable="true"
+        app:showAsAction="never" />
+</menu>
