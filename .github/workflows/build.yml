@@ -1,0 +1,149 @@
+# Baut und testet den IT-Rechner bei jedem Push.
+# Bei einem Versions-Tag wie v1.3.0 entstehen zusätzlich Pakete für Linux, Windows und macOS,
+# die als Release mit Prüfsummen veröffentlicht werden.
+# Die Actions sind auf Commit-Hashes festgelegt, Dependabot hält sie aktuell.
+name: Bauen, testen, veröffentlichen
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code holen
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Java einrichten
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Gradle einrichten und Wrapper prüfen
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+
+      - name: Version festlegen
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          else
+            echo "VERSION=0.0.0-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Bauen und testen
+        run: ./gradlew build -Pversion="${VERSION}"
+
+      - name: JAR aufbewahren
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: jar
+          path: build/libs/it-rechner.jar
+          if-no-files-found: error
+
+  pakete:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: testen
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            typen: deb rpm
+          - os: windows-latest
+            typen: app-image
+          - os: macos-latest
+            typen: dmg
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Java einrichten
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: JAR holen
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: jar
+          path: eingabe
+
+      - name: Werkzeuge für DEB- und RPM-Pakete installieren
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y fakeroot rpm
+
+      - name: Pakete bauen
+        shell: bash
+        env:
+          TYPEN: ${{ matrix.typen }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          extra=()
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            extra=(--linux-shortcut --linux-menu-group Utility --linux-app-category utils)
+          fi
+          for typ in $TYPEN; do
+            jpackage --type "$typ" \
+              --name it-rechner \
+              --app-version "$version" \
+              --vendor "Franz Schkommodau" \
+              --description "Rechner für IT-Berufe" \
+              --input eingabe \
+              --main-jar it-rechner.jar \
+              --main-class itrechner.ItRechner \
+              --add-modules java.desktop \
+              --dest pakete \
+              "${extra[@]}"
+          done
+
+      - name: Windows-Version als ZIP packen
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME.TrimStart('v')
+          Compress-Archive -Path pakete/it-rechner -DestinationPath "pakete/it-rechner-$version-windows.zip"
+          Remove-Item -Recurse pakete/it-rechner
+
+      - name: Pakete aufbewahren
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: pakete-${{ runner.os }}
+          path: pakete/*
+          if-no-files-found: error
+
+  veroeffentlichen:
+    needs: [testen, pakete]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Alle Dateien holen
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          path: fertig
+          merge-multiple: true
+
+      - name: Prüfsummen erzeugen
+        working-directory: fertig
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          mv it-rechner.jar "it-rechner-${version}.jar"
+          sha256sum -- * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Release anlegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" fertig/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "IT-Rechner ${GITHUB_REF_NAME#v}" \
+            --generate-notes

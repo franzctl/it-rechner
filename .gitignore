@@ -1,0 +1,21 @@
+# Gradle
+.gradle/
+build/
+
+# Entwicklungsumgebungen
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+bin/
+out/
+
+# Betriebssysteme
+.DS_Store
+Thumbs.db
+
+# Signierschlüssel gehören nie ins Repo
+*.jks
+*.keystore
