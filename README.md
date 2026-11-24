@@ -1,6 +1,6 @@
 # IT-Rechner
 
-Ein Taschenrechner für IT-Berufe: Grundrechnen, Zahlensysteme, Bit-Operationen, Subnetze, ASCII und Datengrößen in einem Fenster. Entstanden als Schulprojekt in meiner Umschulung zum Fachinformatiker für Systemintegration am BfW Dresden und seitdem weiterentwickelt.
+Ein Taschenrechner für IT-Berufe: Grundrechnen, Zahlensysteme, Bit-Operationen, Subnetze, ASCII und Datengrößen in einem Fenster, für Windows, Linux, macOS und Android. Entstanden als Schulprojekt in meiner Umschulung zum Fachinformatiker für Systemintegration am BfW Dresden und seitdem weiterentwickelt.
 
 ![IT-Rechner im erweiterten Modus mit Subnetzrechner](docs/screenshot.png)
 
@@ -28,18 +28,18 @@ Achtung: `^` ist XOR wie in Java, die Potenz schreibt man `**`.
 
 ## Herunterladen
 
-Die fertigen Pakete liegen unter [Releases](../../releases):
+Die fertigen Pakete der neuesten Version liegen unter [Releases](../../releases/latest):
 
 | System | Datei | Hinweis |
 |---|---|---|
-| Debian, Ubuntu | `.deb` | `sudo apt install ./it-rechner_*.deb` |
-| Fedora, openSUSE | `.rpm` | `sudo dnf install ./it-rechner-*.rpm` |
-| Windows | `-windows.zip` | Entpacken und `it-rechner.exe` starten, keine Installation nötig |
+| Debian, Ubuntu | `it-rechner_<Version>-1_amd64.deb` | im Download-Ordner `sudo apt install ./it-rechner_*_amd64.deb` |
+| Fedora, openSUSE | `it-rechner-<Version>-1.x86_64.rpm` | im Download-Ordner `sudo dnf install ./it-rechner-*.rpm` |
+| Windows | `it-rechner-<Version>-windows.zip` | Entpacken und `it-rechner.exe` starten, keine Installation nötig |
 | macOS | `.dmg` | Öffnen und in „Programme“ ziehen |
-| Alle mit Java 21 | `.jar` | `java -jar it-rechner-*.jar` |
-| Android 7 und neuer | `.apk` | Herunterladen und öffnen, die Installation aus dieser Quelle einmal erlauben |
+| Alle mit Java 21, auch Raspberry Pi und ältere Macs mit Intel | `it-rechner-<Version>.jar` | `java -jar it-rechner-*.jar` |
+| Android 7 und neuer | `it-rechner-<Version>.apk` | Herunterladen und öffnen, die Installation aus dieser Quelle einmal erlauben |
 
-Die Pakete für Linux, Windows und macOS bringen ihre eigene Java-Laufzeit mit.
+Die Pakete für Linux, Windows und macOS bringen ihre eigene Java-Laufzeit mit. Das Paket für macOS ist für Macs mit Apple-Chip gebaut. Nach einem Update installiert man das neue Paket einfach über das alte.
 
 **Warnung beim ersten Start:** Windows und macOS kennen die Pakete nicht, weil sie nicht mit einem gekauften Zertifikat signiert sind. Unter Windows auf „Weitere Informationen“ und „Trotzdem ausführen“ klicken. Unter macOS das Programm einmal starten, dann in den Systemeinstellungen unter „Datenschutz & Sicherheit“ auf „Dennoch öffnen“ klicken.
 
@@ -53,6 +53,7 @@ Die Pakete für Linux, Windows und macOS bringen ihre eigene Java-Laufzeit mit.
 | `Subnetting.java` | Rechnet IPv4-Adressen in Zahlen um und leitet daraus Netz, Broadcast und Hostbereich ab |
 | `ItRechner.java` | Oberfläche mit Swing |
 | `Editor.java` | Kleiner Texteditor für den Verlauf |
+| `Design.java` | Helles und dunkles Design, merkt sich die Wahl |
 
 Rechenkern und Subnetting hängen nicht von der Oberfläche ab und haben eigene JUnit-Tests unter `src/test`.
 
@@ -71,7 +72,7 @@ Das fertige JAR liegt danach unter `build/libs/it-rechner.jar`.
 
 GitHub Actions baut und testet den Rechner bei jedem Push. Schlägt ein Test fehl, wird der Lauf rot.
 
-Bei einem Versions-Tag wie `v1.3.0` baut der Workflow zusätzlich die Pakete für Linux, Windows und macOS, berechnet die Prüfsummen und legt damit ein Release an:
+Bei einem Versions-Tag wie `v1.3.0` baut der Workflow zusätzlich die Pakete für Linux, Windows und macOS sowie die signierte Android-App, berechnet die Prüfsummen und legt damit ein Release an:
 
 ```
 git tag v1.3.0
@@ -85,3 +86,7 @@ Die Actions sind auf Commit-Hashes festgelegt, Dependabot hält sie und die Grad
 Die Android-App liegt unter `android/`. Sie rechnet mit demselben Kern wie die Desktop-Version und hat eigene Seiten für Subnetze und ASCII. Im Moment liegen Rechenkern und Subnetting dort noch als Kopie, ein gemeinsames Modul für beide Versionen ist der nächste Schritt.
 
 Der Workflow baut und testet die App bei jedem Push. Bei einem Release signiert er sie mit meinem Schlüssel. Der Schlüssel liegt nie im Repo, sondern verschlüsselt in den Secrets des Repos (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`). Nur der Android-Schritt bekommt ihn, und nach dem Bauen wird er wieder gelöscht.
+
+## Entstehung
+
+Rechenkern, Subnetting, Oberfläche, Editor und die Android-App habe ich selbst geschrieben, zuerst im Unterricht am BfW und dann darüber hinaus. Beim Aufbau des Repos habe ich mit Claude (Anthropic) als KI-Assistenz gearbeitet: Gradle-Build, Workflow, Paketbau, die JUnit-Tests für die Desktop-Version und das dunkle Design sind so entstanden. Ich habe sie geprüft und getestet und arbeite mich gerade in die Details ein.
